@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.EmployeeMapper">
+<resultMap id="EmployeeMap" type="entity.Employee">
+    <id column="emp_id" property="empId"/>
+    <result column="emp_name" property="empName"/>
+    <result column="dept_id" property="deptId"/>
+    <result column="post_id" property="postId"/>
+    <result column="login_name" property="loginName"/>
+    <result column="password" property="password"/>
+    <result column="phone" property="phone"/>
+    <result column="create_time" property="createTime"/>
+    <result column="salt" property="salt"/>
+    <result column="dept_name" property="deptName"/> <!-- 新增 -->
+    <result column="post_name" property="postName"/> <!-- 新增 -->
+</resultMap>
+
+<select id="selectByLoginName" resultMap="EmployeeMap">
+    SELECT * FROM t_employee WHERE login_name = #{loginName}
+</select>
+
+<select id="selectAll" resultMap="EmployeeMap">
+    SELECT e.*, d.dept_name, p.post_name
+    FROM t_employee e
+             LEFT JOIN t_department d ON e.dept_id = d.dept_id
+             LEFT JOIN t_post p ON e.post_id = p.post_id
+    ORDER BY e.emp_id DESC
+</select>
+
+<insert id="insert" keyProperty="empId" useGeneratedKeys="true">
+    INSERT INTO t_employee
+    (emp_name, dept_id, post_id, login_name, password, phone, create_time, salt)
+    VALUES
+        (#{empName}, #{deptId}, #{postId}, #{loginName}, #{password}, #{phone}, #{createTime}, #{salt})
+</insert>
+<select id="countByPostId" resultType="int">
+    SELECT COUNT(1) FROM t_employee WHERE post_id = #{postId}
+</select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.DepartmentMapper">
+    <resultMap id="DeptMap" type="entity.Department">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="status" property="status"/>
+        <result column="level_depth" property="levelDepth"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="DeptMap">
+        SELECT * FROM t_department ORDER BY parent_id, order_num
+    </select>
+
+    <select id="selectById" resultMap="DeptMap">
+        SELECT * FROM t_department WHERE dept_id = #{deptId}
+    </select>
+
+    <insert id="insert" keyProperty="deptId" useGeneratedKeys="true">
+        INSERT INTO t_department
+            (dept_name, parent_id, order_num, status, level_depth, create_time)
+        VALUES
+            (#{deptName}, #{parentId}, #{orderNum}, #{status}, #{levelDepth}, #{createTime})
+    </insert>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.PostMapper">
+    <resultMap id="PostMap" type="entity.Post">
+        <id column="post_id" property="postId"/>
+        <result column="post_code" property="postCode"/>
+        <result column="post_name" property="postName"/>
+        <result column="post_level" property="postLevel"/>
+        <result column="salary_range" property="salaryRange"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+    </resultMap>
+
+    <select id="selectAllWithDept" resultMap="PostMap">
+        SELECT p.*, d.dept_name
+        FROM t_post p
+                 LEFT JOIN t_department d ON p.dept_id = d.dept_id
+        ORDER BY p.create_time DESC
+    </select>
+
+    <select id="selectById" resultMap="PostMap">
+        SELECT p.*, d.dept_name
+        FROM t_post p
+                 LEFT JOIN t_department d ON p.dept_id = d.dept_id
+        WHERE p.post_id = #{postId}
+    </select>
+
+    <insert id="insert" keyProperty="postId" useGeneratedKeys="true">
+        INSERT INTO t_post
+        (post_code, post_name, post_level, salary_range, description, status, create_time, dept_id)
+        VALUES
+            (#{postCode}, #{postName}, #{postLevel}, #{salaryRange}, #{description}, #{status}, #{createTime}, #{deptId})
+    </insert>
+
+    <update id="update">
+        UPDATE t_post
+        SET post_name=#{postName}, post_level=#{postLevel},
+            salary_range=#{salaryRange}, description=#{description},
+            status=#{status}, dept_id=#{deptId}
+        WHERE post_id=#{postId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_post WHERE post_id=#{postId}
+    </delete>
+
+    <select id="checkCodeUnique" resultType="int">
+        SELECT COUNT(1) FROM t_post WHERE post_code=#{postCode}
+    </select>
+
+    <select id="checkNameUnique" resultType="int">
+        SELECT COUNT(1) FROM t_post WHERE post_name=#{postName} AND dept_id=#{deptId}
+    </select>
+</mapper>

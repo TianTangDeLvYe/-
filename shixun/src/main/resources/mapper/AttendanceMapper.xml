@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.AttendanceMapper">
+    <resultMap id="AttendanceMap" type="entity.Attendance">
+        <id column="id" property="id"/>
+        <result column="emp_id" property="empId"/>
+        <result column="clock_time" property="clockTime"/>
+        <result column="clock_type" property="clockType"/>
+        <result column="location" property="location"/>
+        <result column="status" property="status"/>
+        <result column="emp_name" property="empName"/>
+        <result column="dept_name" property="deptName"/>
+    </resultMap>
+
+    <select id="selectByEmpId" resultMap="AttendanceMap">
+        SELECT a.*, e.emp_name, d.dept_name
+        FROM t_attendance a
+                 LEFT JOIN t_employee e ON a.emp_id = e.emp_id
+                 LEFT JOIN t_department d ON e.dept_id = d.dept_id
+        WHERE a.emp_id = #{empId}
+        ORDER BY a.clock_time DESC
+    </select>
+
+    <select id="selectByDate" resultMap="AttendanceMap">
+        SELECT a.*, e.emp_name, d.dept_name
+        FROM t_attendance a
+                 LEFT JOIN t_employee e ON a.emp_id = e.emp_id
+                 LEFT JOIN t_department d ON e.dept_id = d.dept_id
+        WHERE DATE(a.clock_time) = DATE(#{date})
+        ORDER BY a.clock_time DESC
+    </select>
+
+    <select id="selectLatestByEmpId" resultMap="AttendanceMap">
+        SELECT * FROM t_attendance
+        WHERE emp_id = #{empId}
+        ORDER BY clock_time DESC LIMIT 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_attendance
+            (emp_id, clock_time, clock_type, location, status)
+        VALUES
+            (#{empId}, #{clockTime}, #{clockType}, #{location}, #{status})
+    </insert>
+</mapper>
